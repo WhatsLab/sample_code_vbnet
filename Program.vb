@@ -6,40 +6,59 @@ Imports System.Text
 Imports System.Linq
 Imports MySql.Data.MySqlClient
 
-' Install System.Data.DataSetExtensions to Access AsEnumerable()
-
 Namespace integrationExampleUsingCsharp
     Class Program
-        Private Const RequestUri As String = "" ' Endpoint URL (e.g: https://nana.sa/api/sync_store_products_by_key)
-        Private Const Token As String = "" ' JWT Token (Token will be provided for each branch individually)
-        Private Const query As String = "" ' Query String (e.g select unit_price as price, item_number as sku, barcode as barcode from products)
+        Private Const RequestUri As String = "" ' nana enpoint URL e.g (https://nana.sa/api/sync_store_products_by_key)
+        Private Shared getBranchQuery As String = "" ' query for branches and corresponding tokens
+        Private Shared StoreId As String = "" ' local branch Id
+        Private Shared Token As String = "" ' corresponding token
+        Private Shared getDataQuery As String = "" ' query records either changed products or daily sales
 
         Public Shared Sub Main(ByVal args As String())
-            Dim connStr As String = "server=localhost;database=database;uid=root;pwd=root" ' Connection String
-            Using conn As MySqlConnection = New MySqlConnection(connStr)
+            Dim connStr As String = "server=localhost;database=dotnet;uid=root;pwd=root" ' connection string to the database
+            Using conn As MySqlConnection = New MySqlConnection(connStr) ' initiate connection
                 Try
                     Console.WriteLine("Connecting To MySql ...")
-                    Using da As MySqlDataAdapter = New MySqlDataAdapter() ' Generate The MySql Adapter
-                        Using dt As DataTable = New DataTable()
-                            Using sqlCommand As MySqlCommand = conn.CreateCommand() ' Create MySql Command
-                                sqlCommand.CommandType = CommandType.Text
-                                sqlCommand.CommandText = query
-                                da.SelectCommand = sqlCommand ' Execute MySql Command
-                                da.Fill(dt) ' Dump Result into DataTable
-                                sqlCommand.Dispose()
+                    Using da As MySqlDataAdapter = New MySqlDataAdapter() ' create new instance for the mysql adapter
+                        Using dt1 As DataTable = New DataTable() ' initiate new data table
+                            Using sqlCommand1 As MySqlCommand = conn.CreateCommand() ' prepare new sql command
+                                getBranchQuery = "" ' write query text
+                                ' query example (select name, token from stores)
+                                sqlCommand1.CommandType = CommandType.Text ' define command type
+                                sqlCommand1.CommandText = getBranchQuery ' add command text
+                                da.SelectCommand = sqlCommand1 ' execute command
+                                da.Fill(dt1) ' fill record to the data table declared above
+                                sqlCommand1.Dispose()
                                 da.Dispose()
-                                Console.WriteLine("Preparing Batches")
-                                Dim tr = dt.Rows.Count ' Get Total Rows Count
-                                tr = CInt(Math.Ceiling(CDbl(tr) / 1000)) ' Divide total by the batches
-                                Dim skipCount = 0
 
-                                For i As Integer = 0 To tr - 1 ' Loop through the total table rows
-                                    Console.WriteLine("Sending " & (i + 1) & " Batch")
-                                    Dim dataBatch = dt.AsEnumerable().Skip(skipCount).Take(1000) ' Pick 1000 from the total results
-                                    Dim copyTableData = dataBatch.CopyToDataTable() ' Copy batched to new datatable
-                                    Dim jsonResult = JsonConvert.SerializeObject(New With {Key.product_arrays = copyTableData}) ' Serialize Copied Data To JSON Object (product_arrays key for product_sync and barcode_arrays for daily sales)
-                                    sendRequest(jsonResult)
-                                    skipCount += 1000 ' Increase skipCount by 1000 to pick the next batch
+                                For Each row As DataRow In dt1.Rows ' foreach branch get either changed records or daily sales
+                                    Token = row("token").ToString() ' assign store token
+                                    StoreId = row("name").ToString() ' assign store id
+                                    Using dt As DataTable = New DataTable() ' initiate new data table
+                                        Using sqlCommand As MySqlCommand = conn.CreateCommand() ' prepare new sql command
+                                            getDataQuery = "" ' write query text
+                                            ' query example (select name, phone, store_id from users where store_id='" & StoreId & "')
+                                            sqlCommand.CommandType = CommandType.Text ' define command type
+                                            sqlCommand.CommandText = getDataQuery ' add command text
+                                            da.SelectCommand = sqlCommand ' execute command
+                                            da.Fill(dt) ' fill record to the data table declared above
+                                            sqlCommand.Dispose()
+                                            da.Dispose()
+                                            Console.WriteLine("Preparing Batches")
+                                            Dim tr = dt.Rows.Count ' get total records
+                                            tr = CInt(Math.Ceiling(CDbl(tr) / 10)) ' divide batches 10 per each
+                                            Dim skipCount = 0 ' prepare skipping records 
+
+                                            For i As Integer = 0 To tr - 1 ' loop through records
+                                                Console.WriteLine("Sending " & (i + 1) & " Batch") 
+                                                Dim dataBatch = dt.AsEnumerable().Skip(skipCount).Take(10) ' take every tr number and skip
+                                                Dim copyTableData = dataBatch.CopyToDataTable() ' copy batched to new datatable
+                                                Dim jsonResult = JsonConvert.SerializeObject(New With {Key.product_arrays = copyTableData}) ' serialize copied data to JSON object (product_arrays key for product_sync and barcode_arrays for daily sales)
+                                                sendRequest(jsonResult) ' send request
+                                                skipCount += 10 ' skip the next batch
+                                            Next
+                                        End Using
+                                    End Using
                                 Next
                             End Using
                         End Using
@@ -56,12 +75,10 @@ Namespace integrationExampleUsingCsharp
         Private Shared Sub sendRequest(ByVal data As String)
             Try
                 Using client As HttpClient = New HttpClient()
-                    client.DefaultRequestHeaders.Add("Authorization", Token) ' Add Authorization Header defined on line 12
-
-                    Using content As HttpContent = New StringContent(data, Encoding.UTF8, "application/json") ' Prepare JSON Payload To Send
-
-                        Using response As HttpResponseMessage = client.PostAsync(RequestUri, content).Result ' Send HTTP request and store result in (response)
-                            Console.WriteLine(response.Content.ReadAsStringAsync().Result) ' Print Out Response
+                    client.DefaultRequestHeaders.Add("Authorization", Token) ' append token got from stores query
+                    Using content As HttpContent = New StringContent(data, Encoding.UTF8, "application/json") ' prepare data and headers
+                        Using response As HttpResponseMessage = client.PostAsync(RequestUri, content).Result
+                            Console.WriteLine(response.Content.ReadAsStringAsync().Result)
                             Console.WriteLine("Batch Sent")
                         End Using
                     End Using

@@ -1,0 +1,14 @@
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/bin/Debug/netcoreapp2.2/win10-x64/hostpolicy.dll
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/bin/Debug/netcoreapp2.2/win10-x64/hostfxr.dll
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/bin/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.exe
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/bin/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.deps.json
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/bin/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.runtimeconfig.json
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/bin/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.runtimeconfig.dev.json
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/bin/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.dll
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/bin/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.pdb
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/obj/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.vbprojAssemblyReference.cache
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/obj/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.vbproj.CoreCompileInputs.cache
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/obj/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.AssemblyInfoInputs.cache
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/obj/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.AssemblyInfo.vb
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/obj/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.dll
+/Users/abdulelah/Projects/nana/integration-examples/integrationExampleUsingVBDotNet/obj/Debug/netcoreapp2.2/win10-x64/integrationExampleUsingVBDotNet.pdb
