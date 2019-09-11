@@ -6,7 +6,7 @@ Imports System.Text
 Imports System.Linq
 Imports MySql.Data.MySqlClient
 
-Namespace integrationExampleUsingCsharp
+Namespace integrationExampleUsingVBDotNet
     Class Program
         Private Const RequestUri As String = "" ' nana enpoint URL e.g (https://nana.sa/api/sync_store_products_by_key)
         Private Shared getBranchQuery As String = "" ' query for branches and corresponding tokens
